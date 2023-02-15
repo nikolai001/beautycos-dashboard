@@ -1,5 +1,4 @@
 const express = require('express');
-const morgan = require("morgan");
 var cors = require("cors")
 const { createProxyMiddleware } = require('http-proxy-middleware');
 require('dotenv').config()

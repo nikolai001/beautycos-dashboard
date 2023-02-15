@@ -1,7 +1,6 @@
 <template>
   <div class="dashboard">
-    <p>hello there</p>
-    {{apiTemp}}
+    <p v-for="store in apiTemp" :key="store.uuid">{{store}}</p>
   </div>
 </template>
 
