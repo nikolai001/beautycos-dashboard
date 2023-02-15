@@ -17,15 +17,15 @@ export default {
 
   async mounted () {
     
-    await fetch('https://alarm-dev.beautycos.dk/Api/Location/GetLocations',{
+    await fetch('http://localhost:3000/Location/GetLocations',{
       method: 'GET',
-      mode:'cors',
       headers: {
+        'cors':'cors',
         'XApiKey': 'b0shazG1DpzXOpFRq9TTHHkKZOMSosUV0Jeqnly3',
         'Accept': 'application/json',
     }})
     // }
-    .then(response => response.json())
-    .then(data => this.apiTemp = data)
+    .then((response) => response.json())
+    .then(data => this.apiTemp = data);
   }}
 </script>
