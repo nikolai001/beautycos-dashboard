@@ -2,15 +2,13 @@
 	<!-- <div class="backdrop"/> -->
 	<div class="dashboard">
 		<div class="dashboard__grid">
-			<div class="grid__cell" v-for="store in apiTemp" :key="store.uuid">
+			<div class="grid__cell" v-for="store in locations" :key="store.uuid">
 				<p class="cell__name">{{ store.name }}</p>
-				<p v-if="store.lastAlarm" class="cell__alarm-status">
+				<p v-if="(new Date(store.lastAlarm).valueOf()) >= (new Date(currentUtc).valueOf() - 10 * 60 * 1000)" class="cell__alarm-status">
 					Alarm aktiv!
 				</p>
 				<p v-else class="cell__alarm-status">Ingen alarm</p>
-
-
-				<div v-if="store.lastAlarm" class="cell__sonar cell__sonar--active">
+				<div v-if="(new Date(store.lastAlarm).valueOf()) >= (new Date(currentUtc).valueOf() - 10 * 60 * 1000)" class="cell__sonar cell__sonar--active">
 					<div class="sonar__sonarr sonar__sonarr--active" />
 				</div>
 
@@ -30,12 +28,23 @@ export default {
 
 	data() {
 		return {
-			apiTemp: [],
+			locations: [],
+      currentUtc: ''
 		};
 	},
 
-	async mounted() {
-		await fetch("http://localhost:3000/Location/GetLocations", {
+	mounted() {
+    this.fetchLocation()
+    this.fetchUtc()
+    this.interval = setInterval(function () {
+      this.fetchLocation()
+      this.fetchUtc()
+    }.bind(this), 30000); 
+	},
+
+  methods : {
+    async fetchLocation() {
+      await fetch("http://localhost:3000/Location/GetLocations", {
 			method: "GET",
 			headers: {
 				cors: "cors",
@@ -44,8 +53,23 @@ export default {
 			},
 		})
 			.then((response) => response.json())
-			.then((data) => (this.apiTemp = data));
-	},
+			.then((data) => (this.locations = data));
+    },
+
+    async fetchUtc() {
+      await fetch("http://localhost:3000/Location/GetUtcNow", {
+			method: "GET",
+			headers: {
+				cors: "cors",
+				XApiKey: "b0shazG1DpzXOpFRq9TTHHkKZOMSosUV0Jeqnly3",
+				Accept: "application/json",
+			},
+		})
+			.then((response) => response.json())
+			.then((data) => this.currentUtc = data);
+    },
+  }
+
 };
 </script>
 
@@ -79,7 +103,6 @@ export default {
 			grid-template-columns: 1fr 1fr 0.3fr;
 			font-family: "Roboto";
 			font-size: 18px;
-      // align-content: center;
       align-items: center;
       padding:15px 0;
 
