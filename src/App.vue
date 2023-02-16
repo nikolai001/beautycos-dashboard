@@ -1,5 +1,7 @@
 <template>
-  <DashboardComponent />
+  <main>
+    <DashboardComponent />
+  </main>
 </template>
 
 <script>
@@ -14,5 +16,16 @@ export default {
 </script>
 
 <style lang="scss">
+  @import '@/assets/scss/colors';
+  body {
+    margin:0;
+  }
 
+  main {
+    display:flex;
+    height:100vh;
+    background-color:$primary-white;
+    justify-content: center;
+    align-items: center;
+  }
 </style>
