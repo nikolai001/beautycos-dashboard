@@ -1,158 +1,167 @@
 <template>
-  <div class="dashboard">
-    <table class="dashboard__table">
-      <tr class="table__row" v-for="store in apiTemp" :key="store.uuid">
-        <td class="row__cell row__name">
-          {{store.name}}
-        </td>
-        <td class="row__cell" v-if="store.lastAlarm">
-          AKTIV ALARM
-        </td>
-        <td class="row__cell" v-else>
-          Ingen aktiv alarm
-        </td>
-        <td class="row__cell" v-if="store.lastAlarm">
-          <div class="sonar sonar--active">
-          <div class="sonarr sonarr--active">
+	<!-- <div class="backdrop"/> -->
+	<div class="dashboard">
+		<div class="dashboard__grid">
+			<div class="grid__cell" v-for="store in apiTemp" :key="store.uuid">
+				<p class="cell__name">{{ store.name }}</p>
+				<p v-if="store.lastAlarm" class="cell__alarm-status">
+					Alarm aktiv!
+				</p>
+				<p v-else class="cell__alarm-status">Ingen alarm</p>
 
-          </div>
-          </div>
-        </td>
-        <td class="row__cell" v-else>
-          <div class="sonar sonar--inactive">
-          <div class="sonarr sonarr--inactive">
 
-          </div>
-          </div>
-        </td>
-      </tr>
-    </table>
-  </div>
+				<div v-if="store.lastAlarm" class="cell__sonar cell__sonar--active">
+					<div class="sonar__sonarr sonar__sonarr--active" />
+				</div>
+
+				<div v-else class="cell__sonar cell__sonar--inactive">
+					<div class="sonar__sonarr sonar__sonarr--inactive" />
+				</div>
+        
+			</div>
+
+		</div>
+	</div>
 </template>
 
 <script>
 export default {
-  name: 'DashboardComponent',
+	name: "DashboardComponent",
 
-  data () {
-    return {
-      apiTemp: []
-    }
-  },
+	data() {
+		return {
+			apiTemp: [],
+		};
+	},
 
-  async mounted () {
-    
-    await fetch('http://localhost:3000/Location/GetLocations',{
-      method: 'GET',
-      headers: {
-        'cors':'cors',
-        'XApiKey': 'b0shazG1DpzXOpFRq9TTHHkKZOMSosUV0Jeqnly3',
-        'Accept': 'application/json',
-    }})
-    .then((response) => response.json())
-    .then(data => this.apiTemp = data);
-  }}
+	async mounted() {
+		await fetch("http://localhost:3000/Location/GetLocations", {
+			method: "GET",
+			headers: {
+				cors: "cors",
+				XApiKey: "b0shazG1DpzXOpFRq9TTHHkKZOMSosUV0Jeqnly3",
+				Accept: "application/json",
+			},
+		})
+			.then((response) => response.json())
+			.then((data) => (this.apiTemp = data));
+	},
+};
 </script>
 
 <style lang="scss" scoped>
-  @import '@/assets/scss/colors';
+@import "@/assets/scss/colors";
 
+.dashboard {
+	width: 80%;
+	max-width: 875px;
+	color: $primary-white;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	height: 80%;
+	border-radius: 12px;
+	background-color: $black-shadow;
+	overflow: visible;
+	position: absolute;
+	z-index: 2;
+	&__grid {
+		height: 100%;
+		width: 100%;
+		position: absolute;
+		border-radius: 12px;
+		background-color: $primary-black;
+		transform: translateX(12px) translateY(12px);
+		display: grid;
+		grid-template-columns: 1fr;
+		overflow: scroll;
+		.grid__cell {
+			display: grid;
+			grid-template-columns: 1fr 1fr 0.3fr;
+			font-family: "Roboto";
+			font-size: 18px;
+      // align-content: center;
+      align-items: center;
+      padding:15px 0;
 
-  .dashboard {
-    width: 80%;
-    max-width: 875px;
-    color: $primary-white;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    height:80%;
-    border-radius: 12px ;
-    background-color:$black-shadow;
-    padding:12px 0 0 12px;
-    font-family: 'Roboto';
-    font-size: 18px;
-    &__table {
-      width: 100%;
-      background-color:$primary-black;
-      border-collapse: collapse;
-      border-radius: 12px;
-      
-      .table__row:nth-child(even){
-        background-color: $secondary-black;
-      }
+			.cell__name {
+				font-weight: 500;
+        padding-left: 15%;
+			}
 
-      .row__name {
-        border-right: 2px solid $primary-black;
-        font-weight: 700;
-      }
+			.cell__alarm-status {
+				font-weight: 700;
+        justify-self: center;
+			}
 
-      .row__cell {
-        padding:35px 0;
-        font-weight: 400;
-      }
+			.cell__sonar {
+				height: 25px;
+				width: 25px;
+				border-radius: 100em;
+			}
 
-    }
+			.cell__sonar--active {
+				background-color: $indicator-red;
+			}
+			.cell__sonar--inactive {
+				background-color: $indicator-green;
+			}
 
-    .sonar{
-      height:25px;
-      width:25px;
-      border-radius: 100em;
-    }
+			.sonar__sonarr {
+				height: 25px;
+				width: 25px;
+				border-radius: 100em;
+				position: relative;
+				top: 0;
+				bottom: 0;
+			}
+			.sonar__sonarr--active {
+				background-color: $indicator-red;
+				animation: sonar-effect--active 1s ease-in-out 0.2s infinite;
+			}
 
-    .sonar--active {
-      background-color: $indicator-red;
-    }
-    .sonar--inactive {
-      background-color: $indicator-green;
-    }
+			.sonar__sonarr--inactive {
+				background-color: $indicator-green;
+				animation: sonar-effect--inactive 1s ease-in-out 0.2s infinite;
+			}
 
-    .sonarr{
-      height:25px;
-      width:25px;
-      border-radius: 100em; 
-      position: relative;
-      top:0;
-      bottom:0;
-    }
-  .sonarr--active {
-    background-color: $indicator-red;
-    animation: sonar-effect--active 1s ease-in-out .2s infinite;
-  }   
-  
-  .sonarr--inactive {
-    background-color: $indicator-green;
-    animation: sonar-effect--inactive 1s ease-in-out .2s infinite;
-  }
+			&:nth-child(even) {
+				background-color: $secondary-black;
+			}
+		}
+	}
 }
 
+@keyframes sonar-effect--inactive {
+	0% {
+		opacity: 0.3;
+	}
+	40% {
+		opacity: 0.5;
+		box-shadow: 0 0 0 5px $indicator-green, 0 0 10px 10px $indicator-green,
+			0 0 0 10px $indicator-green;
+	}
+	100% {
+		box-shadow: 0 0 0 5px $indicator-green, 0 0 10px 10px $indicator-green,
+			0 0 0 10px $indicator-green;
+		transform: scale(1.2);
+		opacity: 0;
+	}
+}
 
-    @keyframes sonar-effect--inactive {
-      0% {
-        opacity: 0.3;
-      }
-      40% {
-        opacity: 0.5;
-        box-shadow: 0 0 0 5px $indicator-green, 0 0 10px 10px $indicator-green, 0 0 0 10px $indicator-green;
-      }
-      100% {
-        box-shadow: 0 0 0 5px $indicator-green, 0 0 10px 10px $indicator-green, 0 0 0 10px $indicator-green;
-        transform: scale(1.2);
-        opacity: 0;
-      }
-    }
-
-    @keyframes sonar-effect--active {
-      0% {
-        opacity: 0.3;
-      }
-      40% {
-        opacity: 0.5;
-        box-shadow: 0 0 0 5px $indicator-red, 0 0 10px 10px $indicator-red, 0 0 0 10px $indicator-red;
-      }
-      100% {
-        box-shadow: 0 0 0 5px $indicator-red, 0 0 10px 10px $indicator-red, 0 0 0 10px $indicator-red;
-        transform: scale(1.2);
-        opacity: 0;
-      }
-    }
-
+@keyframes sonar-effect--active {
+	0% {
+		opacity: 0.3;
+	}
+	40% {
+		opacity: 0.5;
+		box-shadow: 0 0 0 5px $indicator-red, 0 0 10px 10px $indicator-red,
+			0 0 0 10px $indicator-red;
+	}
+	100% {
+		box-shadow: 0 0 0 5px $indicator-red, 0 0 10px 10px $indicator-red,
+			0 0 0 10px $indicator-red;
+		transform: scale(1.2);
+		opacity: 0;
+	}
+}
 </style>
