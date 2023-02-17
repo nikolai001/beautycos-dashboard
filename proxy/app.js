@@ -27,6 +27,15 @@ app.use('/Location/GetUtcNow',cors(), createProxyMiddleware({
     },
 }));
 
+app.use('/Location/LongPull',cors(), createProxyMiddleware({
+    target: "https://alarm-dev.beautycos.dk/Api/Location/LongPull",
+    changeOrigin: true,
+    XApiKey: 'b0shazG1DpzXOpFRq9TTHHkKZOMSosUV0Jeqnly3',
+    pathRewrite: {
+        [`^/Location/LongPull`]: '',
+    },
+}));
+
 app.listen(PORT, HOST, () => {
     console.log(`Starting Proxy at ${HOST}:${PORT}`);
 });

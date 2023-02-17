@@ -1,5 +1,4 @@
 <template>
-	<!-- <div class="backdrop"/> -->
 	<div class="dashboard">
 		<div class="dashboard__grid">
 			<div class="grid__cell" v-for="store in locations" :key="store.uuid">
@@ -15,9 +14,8 @@
 				<div v-else class="cell__sonar cell__sonar--inactive">
 					<div class="sonar__sonarr sonar__sonarr--inactive" />
 				</div>
-        
-			</div>
 
+			</div>
 		</div>
 	</div>
 </template>
@@ -29,18 +27,34 @@ export default {
 	data() {
 		return {
 			locations: [],
-      currentUtc: ''
+      currentUtc: '',
+      longPullData: []
 		};
 	},
 
 	mounted() {
     this.fetchLocation()
     this.fetchUtc()
+    this.longPull()
     this.interval = setInterval(function () {
       this.fetchLocation()
       this.fetchUtc()
     }.bind(this), 30000); 
 	},
+
+  watch: {
+    longPullData: {
+      handler(newData) {
+        this.locations.forEach(element => {
+          const matchingData = (newData.locations.find(fetchedLocation => fetchedLocation.uuid === element.uuid))
+          if (matchingData){
+            element.lastAlarm = matchingData.lastAlarm
+          }
+        })
+      },
+      deep: true
+    }
+  },
 
   methods : {
     async fetchLocation() {
@@ -68,6 +82,25 @@ export default {
 			.then((response) => response.json())
 			.then((data) => this.currentUtc = data);
     },
+
+    async longPull() {
+      await fetch("http://localhost:3000/Location/LongPull", {
+        method: "POST",
+        headers: {
+          cors: "cors",
+          XApiKey: "b0shazG1DpzXOpFRq9TTHHkKZOMSosUV0Jeqnly3",
+          Accept: "application/json",
+			  },
+        body: {
+          'last_pull': this.currentUtc
+        }
+      })
+        .then((response) => response.json())
+        .then((data) => this.longPullData = data);
+        // if (this.longPullData.locations.length > 0) {
+        //   this.longPullData.forEach(element => console.log(element.uuid))
+        // }
+    }
   }
 
 };
