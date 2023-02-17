@@ -28,18 +28,21 @@ export default {
 		return {
 			locations: [],
       currentUtc: '',
-      longPullData: []
+      longPullData: [],
 		};
 	},
 
 	mounted() {
     this.fetchLocation()
     this.fetchUtc()
-    this.longPull()
     this.interval = setInterval(function () {
       this.fetchLocation()
       this.fetchUtc()
     }.bind(this), 30000); 
+
+    this.interval = setInterval(function () {
+      this.longPull()
+    }.bind(this), 60000*5); 
 	},
 
   watch: {
@@ -53,6 +56,23 @@ export default {
         })
       },
       deep: true
+    },
+
+    locations: {
+      handler(data) {
+          data.sort((a, b) => {
+            if (a.lastAlarm === null && b.lastAlarm === null) {
+              return 0;
+            } else if (a.lastAlarm === null) {
+              return 1;
+            } else if (b.lastAlarm === null) {
+              return -1;
+            } else {
+              return new Date(b.lastAlarm) - new Date(a.lastAlarm);
+            }
+          });
+      },
+      deep:true
     }
   },
 
@@ -97,9 +117,6 @@ export default {
       })
         .then((response) => response.json())
         .then((data) => this.longPullData = data);
-        // if (this.longPullData.locations.length > 0) {
-        //   this.longPullData.forEach(element => console.log(element.uuid))
-        // }
     }
   }
 
@@ -121,6 +138,7 @@ export default {
 	overflow: visible;
 	position: absolute;
 	z-index: 2;
+
 	&__grid {
 		height: 100%;
 		width: 100%;
