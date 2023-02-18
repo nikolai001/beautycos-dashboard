@@ -5,6 +5,16 @@
 npm install
 ```
 
+### Set up the proxy
+
+```
+cd proxy
+
+npm install
+
+node app.js
+```
+
 ### Compiles and hot-reloads for development
 ```
 npm run serve
