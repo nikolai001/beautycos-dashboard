@@ -1,6 +1,6 @@
 <template>
 	<div class="dashboard">
-		<StoreComponent v-for="store in locations" :key="store.uuid" :status="false" :name="store.name"/>
+		<StoreComponent v-for="store in locations" :key="store.uuid" :status="false" :name="store.name" :lastAlarm="store.lastAlarm" :utc="currentUtc"/>
 	</div>
 </template>
 
@@ -21,23 +21,19 @@ export default {
       		currentUtc: '',
     		longPullData: {
 				data: [],
-				loading: true
+				loading: false
 			},
 		};
 	},
 
 	mounted() {
-    this.fetchLocation()
-    this.fetchUtc()
-	this.longPullData.loading = false
+		this.fetchLocation()
+		this.longPull()
+		this.fetchUtc()
 	
-    this.interval = setInterval(function () {
-      this.fetchLocation()
-      this.fetchUtc()
-    }.bind(this), 30000); 
-
-	this.longPull()
-	
+    	this.interval = setInterval(function () {
+      		this.fetchUtc()
+    	}.bind(this), 60000 * 15); 
 	},
 
   methods : {
@@ -82,7 +78,13 @@ export default {
 			}
 		})
 			.then((response) => response.json())
-			.then((data) => this.longPullData = data)
+			.then((data) => 
+				this.locations.forEach(element => {
+				const matchingData = (data.locations.find(fetchedLocation => fetchedLocation.uuid === element.uuid))
+				if (matchingData) {
+					element.lastAlarm = matchingData.lastAlarm
+				}
+			}))
 			.then(this.longPullData.loading = false);
 		}
 	}

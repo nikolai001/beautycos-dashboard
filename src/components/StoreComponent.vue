@@ -2,7 +2,8 @@
 	<div class="store-card">
         <div class="store-card__sonar store-card__sonar--inactive"></div>
 		<p class="store-card__name">{{name}}</p>
-        <p class="store-card__alarm-status">Ingen aktiv alarm</p>
+        <p v-if="!alarmIsActive()" class="store-card__alarm-status">Ingen aktiv alarm</p>
+        <p v-else class="store-card__alarm-status">Aktiv alarm</p>
 	</div>
 </template>
 
@@ -13,7 +14,20 @@ export default {
     props : {
         status: Boolean,
         name: String,
-        lastAlarm: String
+        lastAlarm: String,
+        utc: String
+    },
+
+    data () {
+        return{
+            alarmActive: false,
+        }
+    },
+    
+    methods: {
+        alarmIsActive() {
+            return (new Date(this.lastAlarm).valueOf() >= (new Date(this.utc).valueOf() - 1 * 60 * 1000));
+        }
     }
 };
 </script>
