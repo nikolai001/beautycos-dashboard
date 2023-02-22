@@ -1,6 +1,6 @@
 <template>
 	<div class="dashboard">
-		<StoreComponent v-for="store in locations" :key="store.uuid" :status="false" :name="store.name" :lastAlarm="store.lastAlarm" :utc="currentUtc"/>
+		<StoreComponent v-for="store in locations" :key="store.uuid" :name="store.name" :lastAlarm="store.lastAlarm" :utc="currentUtc"/>
 	</div>
 </template>
 

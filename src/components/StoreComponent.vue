@@ -1,8 +1,8 @@
 <template>
-	<div class="store-card">
-        <div class="store-card__sonar store-card__sonar--inactive"></div>
+	<div class="store-card" :class="{'store-card--active':alarmActive}" @click="toggleAlarm()">
+        <div class="store-card__sonar store-card__sonar" :class="{'store-card__sonar--active':alarmActive}"></div>
 		<p class="store-card__name">{{name}}</p>
-        <p v-if="!alarmIsActive()" class="store-card__alarm-status">Ingen aktiv alarm</p>
+        <p v-if="!alarmIsActive || !alarmActive" class="store-card__alarm-status">Ingen aktiv alarm</p>
         <p v-else class="store-card__alarm-status">Aktiv alarm</p>
 	</div>
 </template>
@@ -12,7 +12,6 @@ export default {
 	name: "StoreComponent",
 
     props : {
-        status: Boolean,
         name: String,
         lastAlarm: String,
         utc: String
@@ -25,9 +24,18 @@ export default {
     },
     
     methods: {
-        alarmIsActive() {
-            return (new Date(this.lastAlarm).valueOf() >= (new Date(this.utc).valueOf() - 1 * 60 * 1000));
+        
+        toggleAlarm() {
+            this.alarmActive = false
         }
+    },
+    computed : {
+        alarmIsActive() {
+            if (new Date(this.lastAlarm).valueOf() >= (new Date(this.utc).valueOf() - 15 * 60 * 1000)) {
+                this.alarmActive = true
+                return true
+            };
+        },
     }
 };
 </script>
@@ -67,13 +75,13 @@ export default {
         border-radius: 100em;
         align-self: flex-end;
         margin: 12px 12px 0 0;
+        background-color: $indicator-green;
     }
 
     .store-card__sonar--active {
+        background-color: $indicator-red;        
         background-color: $indicator-red;
-    }
-    .store-card__sonar--inactive {
-        background-color: $indicator-green;
+        animation: sonar-effect 1s ease-in-out 0.2s infinite;
     }
 
     .sonar__sonarr {
@@ -105,7 +113,7 @@ export default {
 	100% {
 		box-shadow: 0 0 0 5px $indicator-red, 0 0 10px 10px $indicator-red,
 			0 0 0 10px $indicator-red;
-		transform: scale(1.2);
+		transform: scale(.5);
 		opacity: 0;
 	}
 }
