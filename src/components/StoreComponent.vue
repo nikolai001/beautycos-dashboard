@@ -34,6 +34,9 @@ export default {
             if (new Date(this.lastAlarm).valueOf() >= (new Date(this.utc).valueOf() - 15 * 60 * 1000)) {
                 this.alarmActive = true
                 return true
+            }else {
+                this.alarmActive = false
+                return false
             };
         },
     }
@@ -98,6 +101,7 @@ export default {
     }
     &--active {
         border-left: 4px $indicator-red solid;
+        animation: persistent-slide 1s ease-in-out 0.2s infinite;
     }
 }
 
@@ -116,5 +120,19 @@ export default {
 		transform: scale(.5);
 		opacity: 0;
 	}
+}
+
+@keyframes persistent-slide {
+    0% {
+        border-left: 0px $indicator-red solid;
+    }
+
+    50% {
+        border-left: 10px $indicator-red solid;
+    }
+
+    100% {
+        border-left: 0px $indicator-red solid;
+    }
 }
 </style>
