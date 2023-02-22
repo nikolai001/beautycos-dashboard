@@ -29,7 +29,6 @@ export default {
 	},
 
 	mounted() {
-		// this.fetchLocation()
 		this.getLocation()
 		this.longPull()
 		this.getUtc()
