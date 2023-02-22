@@ -7,6 +7,8 @@
 <script>
 
 import StoreComponent from '@/components/StoreComponent.vue';
+import { fetchLocation, fetchUtc, fetchLong } from '@/functions';
+
 
 export default {
 	name: "DashboardComponent",
@@ -27,68 +29,41 @@ export default {
 	},
 
 	mounted() {
-		this.fetchLocation()
+		// this.fetchLocation()
+		this.getLocation()
 		this.longPull()
-		this.fetchUtc()
-	
+		this.getUtc()
+
     	this.interval = setInterval(function () {
-      		this.fetchUtc()
+      		this.getUtc()
     	}.bind(this), 60000 * 15); 
 	},
 
   methods : {
-    async fetchLocation() {
-      await fetch("http://localhost:3000/Location/GetLocations", {
-			method: "GET",
-			headers: {
-				cors: "cors",
-				XApiKey: "b0shazG1DpzXOpFRq9TTHHkKZOMSosUV0Jeqnly3",
-				Accept: "application/json",
-			},
-		})
-			.then((response) => response.json())
-			.then((data) => (this.locations = data));
-    },
+	async getLocation () {
+		const data = await fetchLocation();
+		this.locations = data
+	},
 
-    async fetchUtc() {
-      await fetch("http://localhost:3000/Location/GetUtcNow", {
-			method: "GET",
-			headers: {
-				cors: "cors",
-				XApiKey: "b0shazG1DpzXOpFRq9TTHHkKZOMSosUV0Jeqnly3",
-				Accept: "application/json",
-			},
-		})
-			.then((response) => response.json())
-			.then((data) => this.currentUtc = data);
-    },
+	async getUtc () {
+		const data =  await fetchUtc()
+		this.currentUtc = data
+	},
 
     async longPull() {
 		while(!this.longPullData.loading){
 			this.longPullData.loading = true
-			await fetch("http://localhost:3000/Location/LongPull", {
-			method: "POST",
-			headers: {
-			cors: "cors",
-			XApiKey: "b0shazG1DpzXOpFRq9TTHHkKZOMSosUV0Jeqnly3",
-			Accept: "application/json",
-				},
-			body: {
-			'last_pull': this.currentUtc
-			}
-		})
-			.then((response) => response.json())
-			.then((data) => 
+				const data = await fetchLong(this.currentUtc)
 				this.locations.forEach(element => {
-				const matchingData = (data.locations.find(fetchedLocation => fetchedLocation.uuid === element.uuid))
-				if (matchingData) {
-					element.lastAlarm = matchingData.lastAlarm
-				}
-			}))
-			.then(this.longPullData.loading = false);
+					const matchingData = (data.locations.find(fetchedLocation => fetchedLocation.uuid === element.uuid))
+					if (matchingData) {
+						element.lastAlarm = matchingData.lastAlarm
+					}
+				})
+				this.longPullData.loading = false
+			}
 		}
-	}
-  }
+  	}
 };
 </script>
 

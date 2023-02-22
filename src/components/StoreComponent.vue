@@ -96,6 +96,7 @@ export default {
     }
     &--active {
         border-left: 4px $indicator-red solid;
+        cursor: pointer;
     }
 }
 
