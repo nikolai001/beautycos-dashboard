@@ -19,13 +19,10 @@ export default {
   @import '@/assets/scss/colors';
   body {
     margin:0;
+    background-color: $secondary-black;
   }
 
   main {
-    display:flex;
-    height:100vh;
-    background-color:$primary-white;
-    justify-content: center;
-    align-items: center;
+    background-color: $secondary-black;
   }
 </style>
