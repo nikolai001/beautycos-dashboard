@@ -83,56 +83,42 @@ export default {
 
     .store-card__sonar--active {
         background-color: $indicator-red;        
-        background-color: $indicator-red;
-        animation: sonar-effect 1s ease-in-out 0.2s infinite;
-    }
-
-    .sonar__sonarr {
-        height: 25px;
-        width: 25px;
-        border-radius: 100em;
-        position: relative;
-        top: 0;
-        bottom: 0;
-    }
-    .sonar__sonarr--active {
-        background-color: $indicator-red;
-        animation: sonar-effect 1s ease-in-out 0.2s infinite;
+        &::before {
+            content: '';
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            top: 0;
+            left: 0;
+            animation: sonar-effect 1.8s ease-in-out 0s infinite;
+        }
     }
     &--active {
         border-left: 4px $indicator-red solid;
-        animation: persistent-slide 1s ease-in-out 0.2s infinite;
     }
 }
 
 @keyframes sonar-effect {
 	0% {
-		opacity: 0.3;
+		opacity: 0;
+        transform: scale(0);
 	}
-	40% {
-		opacity: 0.5;
-		box-shadow: 0 0 0 5px $indicator-red, 0 0 10px 10px $indicator-red,
-			0 0 0 10px $indicator-red;
+	10% {
+		opacity: 0.2;
+		box-shadow: 0 0 0 2px $indicator-red, 0 0 2px 2px $indicator-red,0 0 0 2px $indicator-red;
 	}
+
+    20% {
+		opacity: 0.8;
+		box-shadow: 0 0 0 5px $indicator-red, 0 0 10px 10px $indicator-red,0 0 0 10px $indicator-red;
+	}
+
 	100% {
-		box-shadow: 0 0 0 5px $indicator-red, 0 0 10px 10px $indicator-red,
-			0 0 0 10px $indicator-red;
-		transform: scale(.5);
+		box-shadow: 0 0 0 5px $indicator-red, 0 0 10px 10px $indicator-red,0 0 0 10px $indicator-red;
+		transform: scale(1);
 		opacity: 0;
 	}
 }
 
-@keyframes persistent-slide {
-    0% {
-        border-left: 0px $indicator-red solid;
-    }
-
-    50% {
-        border-left: 10px $indicator-red solid;
-    }
-
-    100% {
-        border-left: 0px $indicator-red solid;
-    }
-}
 </style>
